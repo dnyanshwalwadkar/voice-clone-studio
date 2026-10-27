@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VoiceClone Studio — Instant Zero-Shot Neural Voice Cloning</title>
+    <meta name="description" content="Clone your voice from a 1-2 minute audio clip and generate studio-grade narration with custom pauses and natural pacing.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="ambient-glow"></div>
+    
+    <header class="navbar">
+        <div class="logo">
+            <span class="logo-icon">🎙️</span>
+            <div class="logo-text">
+                <h1>VoiceClone Studio</h1>
+                <span class="badge">Local Neural Flow</span>
+            </div>
+        </div>
+        <div class="nav-links">
+            <a href="https://github.com/dnyanshwalwadka" target="_blank" class="github-btn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
+                </svg>
+                GitHub Repository
+            </a>
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- Hero Section -->
+        <section class="hero-section">
+            <span class="hero-tag">Zero-Shot F5-TTS Flow Matching</span>
+            <h2 class="hero-title">Clone Your Voice in Seconds.<br><span class="gradient-text">Generate Studio-Grade Narration.</span></h2>
+            <p class="hero-subtitle">Upload a 1–2 minute voice clip or record live. Powered by Apple Silicon MPS acceleration, automatic pause preservation, and broadcast 48 kHz export.</p>
+        </section>
+
+        <!-- Main Workspace -->
+        <div class="workspace-grid">
+            <!-- Left Column: Voice Input -->
+            <div class="card glass-card">
+                <div class="card-header">
+                    <div class="step-num">1</div>
+                    <div class="card-title-group">
+                        <h3>Your Vocal Profile</h3>
+                        <p>Upload a 1–2 min voice recording or record from your mic</p>
+                    </div>
+                </div>
+
+                <!-- Dropzone -->
+                <div class="dropzone" id="dropzone">
+                    <input type="file" id="voiceFileInput" accept="audio/*" style="display:none;">
+                    <div class="drop-content" id="dropContent">
+                        <div class="upload-icon">🎧</div>
+                        <h4>Drop your audio file here</h4>
+                        <p>WAV, MP3, M4A, or FLAC (15s – 2 mins recommended)</p>
+                        <button class="btn btn-secondary" type="button" onclick="document.getElementById('voiceFileInput').click()">Browse File</button>
+                    </div>
+                    <div class="upload-status" id="uploadStatus" style="display:none;">
+                        <div class="spinner"></div>
+                        <p id="uploadStatusText">Converting & analyzing voice...</p>
+                    </div>
+                </div>
+
+                <!-- Microphone Recording Alternative -->
+                <div class="record-box">
+                    <button class="btn btn-outline" id="recordBtn" type="button">
+                        <span class="rec-dot"></span> <span id="recordBtnText">Record Live via Microphone</span>
+                    </button>
+                    <span class="rec-timer" id="recTimer" style="display:none;">00:00</span>
+                </div>
+
+                <!-- Reference Voice Preview Player -->
+                <div class="audio-preview-box" id="voicePreviewBox" style="display:none;">
+                    <div class="preview-header">
+                        <span class="tag-success">✓ Profile Ready</span>
+                        <span id="previewFilename" class="preview-name">my_voice.wav</span>
+                    </div>
+                    <audio id="voiceAudioPlayer" controls class="custom-audio"></audio>
+                </div>
+
+                <!-- Auto Transcription Box -->
+                <div class="form-group" style="margin-top: 1.5rem;">
+                    <div class="label-row">
+                        <label for="refTextInput">Reference Spoken Text</label>
+                        <span class="hint">Auto-transcribed by Whisper</span>
+                    </div>
+                    <textarea id="refTextInput" rows="3" placeholder="Transcription of what you spoke in your reference clip will appear here automatically..."></textarea>
+                </div>
+            </div>
+
+            <!-- Right Column: Script & Generation Settings -->
+            <div class="card glass-card">
+                <div class="card-header">
+                    <div class="step-num">2</div>
+                    <div class="card-title-group">
+                        <h3>Script & Delivery Settings</h3>
+                        <p>Type what you want your voice to say with natural pauses</p>
+                    </div>
+                </div>
+
+                <!-- Script Textarea -->
+                <div class="form-group">
+                    <div class="label-row">
+                        <label for="scriptTextInput">Narration Script</label>
+                        <div class="pause-helpers">
+                            <button class="chip-btn" type="button" onclick="insertPause('/')">+ 1-Beat Pause (/)</button>
+                            <button class="chip-btn" type="button" onclick="insertPause('//')">+ 2-Beat Pause (//)</button>
+                        </div>
+                    </div>
+                    <textarea id="scriptTextInput" rows="7" placeholder="Type or paste your script here...&#10;&#10;Use '/' for a 1-beat pause and '//' for a 2-beat pause for charts and equations."></textarea>
+                    
+                    <!-- Presets -->
+                    <div class="presets-row">
+                        <span class="preset-label">Templates:</span>
+                        <button class="preset-btn" type="button" onclick="loadPreset('tech')">Tech Explainer</button>
+                        <button class="preset-btn" type="button" onclick="loadPreset('youtube')">YouTube Intro</button>
+                        <button class="preset-btn" type="button" onclick="loadPreset('podcast')">Podcast Outro</button>
+                    </div>
+                </div>
+
+                <!-- Pacing & Delivery Controls -->
+                <div class="controls-row">
+                    <div class="control-col">
+                        <div class="label-row">
+                            <label for="speedRange">Speaking Speed: <span id="speedVal" class="accent-val">1.40×</span></label>
+                            <span class="hint">145 WPM Natural Pace</span>
+                        </div>
+                        <input type="range" id="speedRange" min="1.00" max="1.60" step="0.05" value="1.40" class="custom-slider">
+                    </div>
+                </div>
+
+                <!-- Generate Action -->
+                <button class="btn btn-primary" id="generateBtn" type="button" disabled>
+                    <span class="btn-icon">⚡</span>
+                    <span id="generateBtnText">Clone Voice & Synthesize Audio</span>
+                </button>
+
+                <!-- Live Progress Box -->
+                <div class="progress-box" id="progressBox" style="display:none;">
+                    <div class="progress-header">
+                        <span id="progressMsg" class="progress-msg">Initializing neural flow...</span>
+                        <span id="progressPct" class="progress-pct">0%</span>
+                    </div>
+                    <div class="progress-track">
+                        <div class="progress-bar" id="progressBar"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Result Deliverable Section -->
+        <section class="card glass-card result-section" id="resultCard" style="display:none;">
+            <div class="result-header">
+                <div class="result-badge">🎉 Ready for Download</div>
+                <h3>Your Personalized Neural Narration</h3>
+                <p>Rendered at 48 kHz 16-bit Mono PCM broadcast standard</p>
+            </div>
+            
+            <div class="result-body">
+                <audio id="resultAudioPlayer" controls class="result-audio"></audio>
+                
+                <div class="result-actions">
+                    <a id="downloadWavBtn" href="#" class="btn btn-primary" download>
+                        <span>📥 Download Broadcast WAV (48 kHz)</span>
+                    </a>
+                    <a id="downloadMp3Btn" href="#" class="btn btn-secondary" download>
+                        <span>🎵 Download High-Bitrate MP3 (320 kbps)</span>
+                    </a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <p>Built with ❤️ by <a href="https://github.com/dnyanshwalwadka" target="_blank">@dnyanshwalwadka</a> · Powered by F5-TTS, PyTorch MPS & Faster-Whisper</p>
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+</html>
