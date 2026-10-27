@@ -61,7 +61,7 @@ graph TD
 ### 2. Clone & Setup
 ```bash
 # Clone the repository
-git clone https://github.com/dnyanshwalwadka/voice-clone-studio.git
+git clone https://github.com/dnyaneshwalwadkar/voice-clone-studio.git
 cd voice-clone-studio
 
 # Run the automated launch script
@@ -169,14 +169,14 @@ git add .
 git commit -m "feat: initial commit of VoiceClone Studio with F5-TTS, Faster-Whisper, and modern Web UI"
 
 # Add your GitHub remote
-git remote add origin https://github.com/dnyanshwalwadka/voice-clone-studio.git
+git remote add origin https://github.com/dnyaneshwalwadkar/voice-clone-studio.git
 
 # Set main branch and push
 git branch -M main
 git push -u origin main
 ```
 
-*(Ensure you have created the empty repository `voice-clone-studio` on your GitHub account at `https://github.com/dnyanshwalwadka/voice-clone-studio`).*
+*(Ensure you have created the empty repository `voice-clone-studio` on your GitHub account at `https://github.com/dnyaneshwalwadkar/voice-clone-studio`).*
 
 ---
 
@@ -188,5 +188,5 @@ This project is licensed under the [MIT License](LICENSE) - see the LICENSE file
 
 ## 👤 Author
 
-Developed by **[Dnyanesh Walwadkar](https://github.com/dnyanshwalwadka)**  
+Developed by **[Dnyanesh Walwadkar](https://github.com/dnyaneshwalwadkar)**  
 Contributions and stars are welcome! ⭐️
