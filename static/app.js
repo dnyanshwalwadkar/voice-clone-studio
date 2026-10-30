@@ -82,7 +82,7 @@ async function handleFileUpload(file) {
         const data = await res.json();
 
         currentVoiceId = data.voice_id;
-        previewFilename.textContent = data.filename;
+        previewFilename.textContent = data.duration ? `${data.filename} (${data.duration.toFixed(1)}s reference)` : data.filename;
         voiceAudioPlayer.src = data.audio_url;
         voicePreviewBox.style.display = 'block';
 
@@ -111,7 +111,15 @@ recordBtn.addEventListener('click', async () => {
         recTimer.style.display = 'none';
     } else {
         try {
-            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            const stream = await navigator.mediaDevices.getUserMedia({
+                audio: {
+                    echoCancellation: true,
+                    noiseSuppression: true,
+                    autoGainControl: true,
+                    channelCount: 1,
+                    sampleRate: 48000
+                }
+            });
             audioChunks = [];
             mediaRecorder = new MediaRecorder(stream);
             
@@ -127,7 +135,7 @@ recordBtn.addEventListener('click', async () => {
             };
 
             mediaRecorder.start();
-            recordBtnText.textContent = 'Stop Recording (Speak naturally)';
+            recordBtnText.textContent = 'Stop Recording (5–10s recommended)';
             recordBtn.classList.add('btn-danger');
             
             // Timer

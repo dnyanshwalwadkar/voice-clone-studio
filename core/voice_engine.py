@@ -43,19 +43,30 @@ class VoiceCloneEngine:
         audio, sr = torchaudio.load(ref_audio_path)
         if audio.shape[0] > 1:
             audio = torch.mean(audio, dim=0, keepdim=True)
-            
-        target_rms = 0.1
-        rms = torch.sqrt(torch.mean(torch.square(audio)))
-        if rms < target_rms:
-            audio = audio * target_rms / rms
+
         if sr != target_sample_rate:
             resampler = torchaudio.transforms.Resample(sr, target_sample_rate)
             audio = resampler(audio)
-            
+
+        # Enforce maximum reference duration (11.5s) to prevent F5-TTS attention blowout & hallucinations
+        max_ref_samples = int(11.5 * target_sample_rate)
+        if audio.shape[-1] > max_ref_samples:
+            audio = audio[:, :max_ref_samples]
+
+        # Normalize RMS volume without aggressively boosting mic preamp hiss
+        target_rms = 0.08
+        rms = torch.sqrt(torch.mean(torch.square(audio)))
+        if rms > 1e-5:
+            gain = min(target_rms / rms.item(), 2.5) # Max 2.5x boost
+            if gain > 1.0:
+                audio = audio * gain
+            elif rms.item() > 0.15: # Prevent clipping if input was too loud
+                audio = audio * (target_rms / rms.item())
+
         cond_audio = audio.to(self.device)
         ref_audio_len = cond_audio.shape[-1] // hop_length
         ref_text_len = len(ref_text.encode("utf-8"))
-        
+
         return {
             "cond_audio": cond_audio,
             "ref_text": ref_text,

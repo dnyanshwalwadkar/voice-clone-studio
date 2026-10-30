@@ -6,7 +6,7 @@ from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
-from core.audio_processor import convert_to_wav, auto_transcribe
+from core.audio_processor import convert_to_wav, auto_transcribe, prepare_reference_audio
 from core.voice_engine import VoiceCloneEngine
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -32,7 +32,7 @@ def get_engine():
 
 @app.post("/api/upload_voice")
 async def upload_voice(file: UploadFile = File(...)):
-    """Uploads a voice sample (1-2 minutes) and auto-transcribes it."""
+    """Uploads a voice sample, applies noise filtering, extracts optimal 5-11s reference, and auto-transcribes."""
     voice_id = str(uuid.uuid4())[:8]
     ext = os.path.splitext(file.filename)[1] or ".wav"
     raw_path = os.path.join(UPLOADS_DIR, f"{voice_id}_raw{ext}")
@@ -42,16 +42,14 @@ async def upload_voice(file: UploadFile = File(...)):
     with open(raw_path, "wb") as f:
         f.write(content)
 
-    # Convert to 24kHz Mono WAV
-    convert_to_wav(raw_path, clean_wav, sample_rate=24000)
-
-    # Auto-transcribe using local Whisper
-    transcript = auto_transcribe(clean_wav)
+    # Denoise, highpass filter, and extract optimal 5-11s reference window
+    prep_res = prepare_reference_audio(raw_path, clean_wav, max_duration=11.0, sample_rate=24000)
 
     return {
         "voice_id": voice_id,
         "filename": file.filename,
-        "transcript": transcript,
+        "transcript": prep_res.get("transcript", ""),
+        "duration": prep_res.get("duration", 0.0),
         "audio_url": f"/api/audio/upload/{voice_id}_clean.wav"
     }
 

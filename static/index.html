@@ -36,7 +36,7 @@
         <section class="hero-section">
             <span class="hero-tag">Zero-Shot F5-TTS Flow Matching</span>
             <h2 class="hero-title">Clone Your Voice in Seconds.<br><span class="gradient-text">Generate Studio-Grade Narration.</span></h2>
-            <p class="hero-subtitle">Upload a 1–2 minute voice clip or record live. Powered by Apple Silicon MPS acceleration, automatic pause preservation, and broadcast 48 kHz export.</p>
+            <p class="hero-subtitle">Record 5–10 seconds of clear speech or upload any audio file. Powered by Apple Silicon MPS acceleration, real-time noise reduction, and broadcast 48 kHz export.</p>
         </section>
 
         <!-- Main Workspace -->
@@ -47,7 +47,7 @@
                     <div class="step-num">1</div>
                     <div class="card-title-group">
                         <h3>Your Vocal Profile</h3>
-                        <p>Upload a 1–2 min voice recording or record from your mic</p>
+                        <p>Record 5–10 seconds or upload your voice sample</p>
                     </div>
                 </div>
 
@@ -57,12 +57,12 @@
                     <div class="drop-content" id="dropContent">
                         <div class="upload-icon">🎧</div>
                         <h4>Drop your audio file here</h4>
-                        <p>WAV, MP3, M4A, or FLAC (15s – 2 mins recommended)</p>
+                        <p>WAV, MP3, M4A, or FLAC (5–15 seconds recommended)</p>
                         <button class="btn btn-secondary" type="button" onclick="document.getElementById('voiceFileInput').click()">Browse File</button>
                     </div>
                     <div class="upload-status" id="uploadStatus" style="display:none;">
                         <div class="spinner"></div>
-                        <p id="uploadStatusText">Converting & analyzing voice...</p>
+                        <p id="uploadStatusText">Denoising & analyzing voice...</p>
                     </div>
                 </div>
 
@@ -72,6 +72,7 @@
                         <span class="rec-dot"></span> <span id="recordBtnText">Record Live via Microphone</span>
                     </button>
                     <span class="rec-timer" id="recTimer" style="display:none;">00:00</span>
+                    <p style="font-size: 0.8rem; color: #94a3b8; margin-top: 0.5rem; text-align: center;">💡 Speak 1–2 clean sentences clearly (5–10s) in a quiet room for best fidelity.</p>
                 </div>
 
                 <!-- Reference Voice Preview Player -->
